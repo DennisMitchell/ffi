@@ -1,5 +1,5 @@
 from ctypes import cdll
-from genprint import generate
+from generate import generate
 from parser import parse_code, parse_integer
 from subprocess import call
 from tempfile import NamedTemporaryFile
@@ -13,7 +13,7 @@ def gen_print_state(primes, file, indentation):
 
 	file.write(');\n')
 
-def run(code, input, print_all = False, gen_print = 'state'):
+def run(code, input, print_all = False, gen_print = 'state', **kwargs):
 	fractions = list(parse_code(code))
 	input = parse_integer(input)
 	primes= sorted(set.union(*map(set, fractions)) | set(input))
@@ -31,7 +31,7 @@ def run(code, input, print_all = False, gen_print = 'state'):
 	c_file.write('\n\twhile (1)\n\t{\n')
 
 	if print_all:
-		generate(gen_print, primes, c_file, 2)
+		generate(gen_print, primes, c_file, 2, **kwargs)
 
 	for fraction in fractions:
 		conditions = (
@@ -51,7 +51,7 @@ def run(code, input, print_all = False, gen_print = 'state'):
 	c_file.write('\t\tbreak;\n\t}\n\n')
 
 	if not print_all:
-		generate(gen_print, primes, c_file, 1)
+		generate(gen_print, primes, c_file, 1, **kwargs)
 
 	c_file.write('}\n')
 	c_file.flush()
