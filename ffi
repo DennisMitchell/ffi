@@ -1,1 +1,11 @@
-ffi.py
+#!/bin/sh
+
+ffi="$(cd "$(dirname -- "$(readlink -e -- "$0")")"; pwd)/ffi.py"
+
+for interpreter in \
+	python3	python2	python
+do
+	which $interpreter &> /dev/null && exec $interpreter "$ffi" "$@"
+done
+
+exit "Could not find a Python interpreter."
