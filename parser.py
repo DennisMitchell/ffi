@@ -1,16 +1,19 @@
 from collections import defaultdict
 from ntheory import factors
-from re import compile, finditer, match
+from re import compile, finditer, match, sub
 from sys import stderr
 
-_str_power = r'[1-9][0-9]*(?: *\^ *[1-9][0-9]*)?'
-_str_product = r'%s(?: *\* *%s)*' % (_str_power, _str_power)
+_str_power = r'(?:[1-9][0-9]*(?: *\^ *[1-9][0-9]*)?)'
+_str_product = r'(?:%s(?: *\* *%s)*)' % (_str_power, _str_power)
 _str_integer = r'(%s|%s)' % (_str_product, _str_power)
 _str_term = r'(\(%s\)|%s)' % (_str_product, _str_power)
-_str_fraction = r'%s */ *%s' % (_str_term, _str_term)
-_str_sep = r'[^0-9^*/()]'
-_str_code = r'(?:%s*%s(?:%s+|$))*' % (_str_sep, _str_fraction, _str_sep)
+_str_fraction = r'(?:%s */ *%s)' % (_str_term, _str_term)
+_str_ws = r'[\t\n ]'
+_str_sep = r'(?:%s*[,.;]%s*|%s+)' % (_str_ws, _str_ws, _str_ws)
+_str_code = r'(?:%s*(?:%s%s)*%s?)' % (_str_ws, _str_fraction, _str_sep, _str_fraction)
+_str_comment = r'(?:#[^\n]*)'
 _re_code = compile(_str_code)
+_re_comment = compile(_str_comment)
 _re_fraction = compile(_str_fraction)
 _re_integer = compile(_str_integer)
 
@@ -21,11 +24,12 @@ def match_or_error(regex, string, error_name):
 	if parsed < len(string):
 		print_from = max(parsed - 20, 0)
 		stderr.write('Error: Unable to parse as a positive %s:\n\n' % error_name)
-		stderr.write(string[print_from:][:80] + '\n')
+		stderr.write(string[print_from:][:80].split('\n')[0] + '\n')
 		stderr.write('~' * (parsed - print_from) + '^\n')
 		exit(1)
 
 def parse_code(code):
+	code = sub(_re_comment, '', code).strip('\t\n ')
 	match_or_error(_re_code, code, 'fraction')
 
 	for fraction_match in finditer(_re_fraction, code):
