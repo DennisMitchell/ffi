@@ -1,0 +1,4 @@
+# copied from https://en.wikipedia.org/wiki/FRACTRAN
+# for input n, run with `ffi -e13 hamming_weight.frac 2^n`
+
+33/20 5/11 13/10 1/5 2/3 10/7 7/2

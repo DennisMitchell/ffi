@@ -1,0 +1,4 @@
+# copied from https://en.wikipedia.org/wiki/FRACTRAN
+# for inputs n and m, run with `ffi -e3 add.frac "2^n * 3^m"`
+
+3/2

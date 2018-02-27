@@ -1,0 +1,5 @@
+# written by Devin Kilminster
+# copied from https://esolangs.org/wiki/Fractran
+# run with `ffi -p10 -e2 primes09.frac 100`
+
+3/11 847/45 143/6 7/3 10/91 3/7 36/325 1/2 36/5

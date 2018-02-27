@@ -56,7 +56,7 @@ def ffi(*args):
 
 	print_what.add_argument(
 		'-e', '--exp', dest = 'print_exp', metavar = 'PRIMES',
-		help = 'Print the exponent of PRIMES (comma-separated list)'
+		help = 'Print the exponent of PRIMES (comma-separated list) '
 			'in the state\'s prime factorization.'
 	)
 

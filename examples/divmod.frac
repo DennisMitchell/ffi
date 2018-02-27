@@ -1,0 +1,4 @@
+# copied from https://en.wikipedia.org/wiki/FRACTRAN
+# for inputs n and d, run with `ffi -e5,7 divmod.frac "2^n *3^d * 11"`
+
+91/66 11/13 1/33 85/11 57/119 17/19 11/17 1/3

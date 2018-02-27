@@ -1,0 +1,6 @@
+# written by Programing Puzzles & Code Golf user Sp3000
+# copied from https://codegolf.stackexchange.com/a/57792/12012
+# for input n, run with `ffi -e3 is_prime.frac 5^n`
+
+29/14 222/377 59/26 247/59 329/57 19/47 2/19 11/29 403/407 217/33 11/31 2/11
+1/37 1/2 23/9 43/69 23/43 1/23 425/41 4823/85 17/53 41/25 2/119 1/5
