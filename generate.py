@@ -22,22 +22,38 @@ def gen_print_compact(primes, file, indent, **kwargs):
 
 def gen_print_exp(primes, file, indent, **kwargs):
 	try:
-		exps_of = kwargs['print_exp']
-		exps_of = list(map(int, exps_of.rstrip(',').split(',')))
+		exps = kwargs['print_exp']
+		exps = list(map(int, exps.rstrip(',').split(',')))
+		assert all(exp > 1 for exp in exps)
 	except:
 		stderr.write(
-			'Error: Cannot parse %r as a comma-separated list of integers.\n' % exps_of
+			'Error: Cannot parse %r as a comma-separated list of integers larger than 1.\n'
+			 % kwargs['print_exp']
 		)
 
 		exit(1)
 
-	file.write('\t' * indent)
-	file.write('printf("%s\\n"' % ' '.join('%" PRIu64 "' for prime in exps_of))
+	tabs = '\t' * indent
+	sep = ''
 
-	for prime in exps_of:
-		file.write(', s%u' % prime if prime in primes else ', (uint64_t) 0')
+	for exp in exps:
+		set_quot = tabs + 'quot = %s;\n'
+		file.write(set_quot % 'UINT64_MAX')
+		exp_factors = factors(exp)
 
-	file.write(');\n')
+		for prime, exponent in exp_factors.items():
+			if prime not in primes:
+				file.write(set_quot % '__UINT64_C(0)')
+			else:
+				file.write(
+					set_quot % 's%u / %u < quot ? s%u / %u : quot'
+					% (prime, exponent, prime, exponent)
+				)
+
+		file.write('%sprintf("%s%%" PRIu64, quot);\n' % (tabs, sep))
+		sep = ' '
+
+	file.write(tabs + 'printf("\\n");\n')
 
 def gen_print_pow(primes, file, indent, **kwargs):
 	try:
@@ -46,7 +62,7 @@ def gen_print_pow(primes, file, indent, **kwargs):
 		assert base > 0
 		base = factors(base)
 	except:
-		stderr.write('Error: Cannot parse %r as a positive integer.\n' % base)
+		stderr.write('Error: Cannot parse %r as a positive integer.\n' % kwargs['print_pow'])
 		exit(1)
 
 	tabs = '\t' * indent
