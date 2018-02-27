@@ -35,14 +35,13 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	if print_when == 'print_all':
 		generate(print_what, primes, c_file, 2, **kwargs)
+		c_file.write('\t\tfflush(stdout);\n\n')
 
 	if print_when == 'print_pow':
 		generate(print_when, primes, c_file, 2, **kwargs)
 		c_file.write('\t\t{\n')
 		generate(print_what, primes, c_file, 3, **kwargs)
-		c_file.write('\t\t}\n\n')
-
-	c_file.write('\t\tfflush(stdout);\n\n')
+		c_file.write('\t\t\tfflush(stdout);\n\t\t}\n\n')
 
 	for fraction in fractions:
 		conditions = (
