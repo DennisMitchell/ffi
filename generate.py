@@ -60,13 +60,11 @@ def gen_print_pow(primes, file, indent, **kwargs):
 			file.write(tabs + 'if(0)\n')
 			return
 
-	file.write(tabs + 'quot = s%u / %u;\n' % next(iter(base.items())))
-	file.write(tabs + 'if(%s)\n' % ' && '.join(
-		's%u %% %u == 0 && s%u / %u == quot' % (prime, base[prime], prime, base[prime])
-		if prime in base
-		else 's%u == 0' % prime
-		for prime in primes
-	))
+	file.write(tabs + 'quot = s%u / %u;\n\n' % next(iter(base.items())))
+	file.write('%sif\n%s(\n%s\t' % (tabs, tabs, tabs))
+	and_ = '\n%s&&\n%s\t' % (tabs, tabs)
+	file.write(and_.join('%u * quot == s%u' % (base[prime], prime) for prime in primes))
+	file.write('\n%s)\n' % tabs)
 
 def gen_print_whole(primes, file, indent, **kwargs):
 	file.write('\t' * indent)

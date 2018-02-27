@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from compiler import run
 
 def ffi(*args):
-	argparser = ArgumentParser(description = 'Frabjous FRACTRAN Interpreter')
+	argparser = ArgumentParser(description = 'Frabjous FRACTRAN Interpreter', prog = 'ffi')
 
 	try:
 		argparser._actions[0].help = 'Show this help message and exit.'

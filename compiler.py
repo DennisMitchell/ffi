@@ -50,7 +50,9 @@ def run(code, input, print_when, print_what, **kwargs):
 			if exponent < 0
 		)
 
-		c_file.write('\t\tif (%s)\n\t\t{\n' % (' && '.join(conditions) or '1'))
+		c_file.write('\t\tif\n\t\t(\n\t\t\t')
+		c_file.write('\n\t\t&&\n\t\t\t'.join(conditions) or '1')
+		c_file.write('\n\t\t)\n\t\t{\n')
 
 		for prime, exponent in fraction.items():
 			c_file.write('\t\t\ts%u += %d;\n' % (prime, exponent))
