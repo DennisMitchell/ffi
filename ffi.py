@@ -50,8 +50,14 @@ def ffi(*args):
 
 	print_what.add_argument(
 		'-w', '--whole', dest = 'print_what',
-		action = 'store_const', const = 'print_whole', default = 'print_whole',
+		action = 'store_const', const = 'print_whole',
 		help = 'Print the whole state, including 0 and 1 exponents.'
+	)
+
+	print_what.add_argument(
+		'-n', '--numeric', dest = 'print_what',
+		action = 'store_const', const = 'print_numeric',
+		help = 'Print the state as a numeric literal. (requires GMP)'
 	)
 
 	print_what.add_argument(

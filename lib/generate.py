@@ -16,7 +16,7 @@ def gen_print_compact(primes, emit, indent, **kwargs):
 		emit('%sif (s%u == 1) one = ' % (tabs, prime))
 		emit('!printf("%%s%u", one ? "" : " * ");\n' %  prime)
 		emit('%selse if (s%u) one = ' % (tabs, prime))
-		emit('!printf("%%s%u^%%" PRIu64, one ? "" : " * ", s%u);\n' % (prime, prime))
+		emit('!printf("%%s%u^%%lu", one ? "" : " * ", s%u);\n' % (prime, prime))
 
 	emit(tabs + 'printf("%s\\n", one ? "1" : "");\n')
 
@@ -38,22 +38,32 @@ def gen_print_exp(primes, emit, indent, **kwargs):
 
 	for exp in exps:
 		set_quot = tabs + 'quot = %s;\n'
-		emit(set_quot % 'UINT64_MAX')
+		emit(set_quot % '~0UL')
 		exp_factors = factors(exp)
 
 		for prime, exponent in exp_factors.items():
 			if prime not in primes:
-				emit(set_quot % '__UINT64_C(0)')
+				emit(set_quot % '0UL')
 			else:
 				emit(
 					set_quot % 's%u / %u < quot ? s%u / %u : quot'
 					% (prime, exponent, prime, exponent)
 				)
 
-		emit('%sprintf("%s%%" PRIu64, quot);\n' % (tabs, sep))
+		emit('%sprintf("%s%%lu", quot);\n' % (tabs, sep))
 		sep = ' '
 
 	emit(tabs + 'printf("\\n");\n')
+
+def gen_print_numeric(primes, emit, indent, **kwargs):
+	tabs = '\t' * indent
+	emit(tabs + 'mpz_set_ui(out, 1);\n')
+
+	for prime in primes:
+		emit(tabs + 'mpz_ui_pow_ui(pow, %uUL, s%u);\n' % (prime, prime))
+		emit(tabs + 'mpz_mul(out, out, pow);\n')
+
+	emit(tabs + 'gmp_printf("%Zu\\n", out);\n')
 
 def gen_print_pow(primes, emit, indent, **kwargs):
 	try:
@@ -84,7 +94,7 @@ def gen_print_pow(primes, emit, indent, **kwargs):
 
 def gen_print_whole(primes, emit, indent, **kwargs):
 	emit('\t' * indent)
-	emit('printf("%s\\n"' % ' * '.join('%u^%%" PRIu64 "' % prime for prime in primes))
+	emit('printf("%s\\n"' % ' * '.join('%u^%%lu"' % prime for prime in primes))
 
 	for prime in primes:
 		emit(', s%u' % prime)

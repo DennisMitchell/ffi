@@ -11,15 +11,18 @@ def run(code, input, print_when, print_what, **kwargs):
 	input = parse_integer(input)
 	primes= sorted(set.union(*map(set, fractions)) | set(input))
 	numargs = len(primes)
+	use_gmp = print_what == 'print_numeric'
 
 	c_code = []
-	c_code.append('#include <%s.h>\n' * 2 % ('inttypes', 'stdio'))
+	c_code.append('#include <gmp.h>\n' * use_gmp)
+	c_code.append('#include <stdio.h>\n')
 	c_code.append('\nint main()\n{\n')
 
 	for prime in primes:
-		c_code.append('\tuint64_t s%u = %u;\n' % (prime, input[prime]))
+		c_code.append('\tunsigned long s%u = %u;\n' % (prime, input[prime]))
 
-	c_code.append('\n\tuint64_t one, quot;\n\n')
+	c_code.append('\tunsigned long one, quot;\n\n')
+	c_code.append('\tmpz_t pow, out;\n\tmpz_init(pow);\n\tmpz_init(out);\n\n' * use_gmp)
 	c_code.append('\twhile (1)\n\t{\n')
 
 	if print_when == 'print_all':
@@ -61,7 +64,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	src.close()
 
 	try:
-		assert not call(['cc', '-w', '-O2', '-oprogram', 'program.c'])
+		assert not call(['cc', '-O2', '-oprogram', 'program.c'] + ['-lgmp'] * use_gmp)
 		call(['./program'])
 	except AssertionError:
 		exit(1)
