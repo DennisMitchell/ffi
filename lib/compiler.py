@@ -1,4 +1,3 @@
-from ctypes import cdll
 from os import remove
 from subprocess import call
 from sys import stderr
@@ -13,17 +12,13 @@ def run(code, input, print_when, print_what, **kwargs):
 	numargs = len(primes)
 
 	c_file = NamedTemporaryFile(mode = 'w+', suffix = '.c', delete = False)
-	c_file.write('#include <%s.h>\n' * 4 % ('inttypes', 'signal', 'stdlib', 'stdio') + '\n')
-	c_file.write('void quit(int signal)\n{\n')
-	c_file.write('\tif (signal == 2) fputs("\\n", stderr);\n\texit(128 | signal);')
-	c_file.write('\n}\n\nvoid run()\n{\n')
+	c_file.write('#include <%s.h>\n' * 2 % ('inttypes', 'stdio'))
+	c_file.write('\nint main()\n{\n')
 
 	for prime in primes:
 		c_file.write('\tuint64_t s%u = %u;\n' % (prime, input[prime]))
 
 	c_file.write('\n\tuint64_t one, quot;\n\n')
-	c_file.write('\t#ifndef __MINGW32__\n\t\tsignal(SIGINT, quit);\n')
-	c_file.write('\t\tsignal(SIGPIPE, quit);\n\t#endif\n\n')
 	c_file.write('\twhile (1)\n\t{\n')
 
 	if print_when == 'print_all':
@@ -57,25 +52,23 @@ def run(code, input, print_when, print_what, **kwargs):
 	if print_when == 'print_final':
 		generate(print_what, primes, c_file, 1, **kwargs)
 
-	c_file.write('}\n')
+	c_file.write('\treturn 0;\n}\n')
 	c_file.close()
-	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so', delete = False)
-	so_file.close()
+	bin_file = NamedTemporaryFile(mode = 'rb', delete = False)
+	bin_file.close()
 
 	if call([
 		'cc', '-Wall', '-Wextra', '-Wno-unused-variable', '-Werror',
-		 '-O2', '-shared', '-fPIC', '-o', so_file.name, c_file.name
+		'-O2', '-o', bin_file.name, c_file.name
 	]):
 		exit(1)
 
-	program = cdll.LoadLibrary(so_file.name)
 	remove(c_file.name)
 
 	try:
-		remove(so_file.name)
-		program.run()
-	except:
-		program.run()
-		from ctypes import windll
-		windll.kernel32.FreeLibrary(program._handle)
-		remove(so_file.name)
+		call([bin_file.name])
+		remove(bin_file.name)
+	except KeyboardInterrupt:
+		stderr.write('\n')
+		remove(bin_file.name)
+		exit(130)
