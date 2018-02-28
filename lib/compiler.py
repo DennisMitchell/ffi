@@ -62,7 +62,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	so_file.close()
 
 	if call([
-		'cc', '-ansi', '-pedantic', '-Wall', '-Wextra', '-Wno-unused-variable', '-Werror',
+		'cc', '-Wall', '-Wextra', '-Wno-unused-variable', '-Werror',
 		 '-O2', '-shared', '-fPIC', '-o', so_file.name, c_file.name
 	]):
 		exit(1)
