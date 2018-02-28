@@ -56,7 +56,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	c_file = NamedTemporaryFile(mode = 'w+', suffix = '.c', delete = False)
 	c_file.write(''.join(c_code))
 	c_file.close()
-	bin_file = NamedTemporaryFile(mode = 'rb', delete = False)
+	bin_file = NamedTemporaryFile(mode = 'rb', delete = False, suffix = '.exe')
 	bin_file.close()
 
 	if call([
