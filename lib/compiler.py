@@ -76,5 +76,6 @@ def run(code, input, print_when, print_what, **kwargs):
 		program.run()
 	except:
 		program.run()
+		from ctypes import windll
 		windll.kernel32.FreeLibrary(program._handle)
 		remove(so_file.name)
