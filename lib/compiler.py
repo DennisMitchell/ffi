@@ -1,4 +1,5 @@
 from ctypes import cdll
+from os import remove
 from subprocess import call
 from tempfile import NamedTemporaryFile
 from .generate import generate
@@ -57,7 +58,8 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	c_file.write('}\n')
 	c_file.flush()
-	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so')
+	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so', delete = False)
+	so_file.close()
 
 	if call([
 		'cc', '-ansi', '-pedantic', '-Wall', '-Wextra', '-Wno-unused-variable', '-Werror',
@@ -67,5 +69,5 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	c_file.close()
 	program = cdll.LoadLibrary(so_file.name)
-	so_file.close()
+	remove(so_file.name)
 	program.run()
