@@ -59,7 +59,6 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	c_file.write('}\n')
 	c_file.close()
-	call(['cp', c_file.name, 'debug.c'])
 	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so', delete = False)
 	so_file.close()
 
