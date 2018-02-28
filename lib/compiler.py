@@ -73,7 +73,8 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	try:
 		remove(so_file.name)
+		program.run()
 	except:
-		stderr.write('Warning: Could not remove temporary file %r.\n' % so_file.name)
-
-	program.run()
+		program.run()
+		windll.kernel32.FreeLibrary(program._handle)
+		remove(so_file.name)
