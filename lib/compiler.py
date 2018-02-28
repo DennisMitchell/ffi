@@ -1,17 +1,8 @@
 from ctypes import cdll
-from generate import generate
-from parser import parse_code, parse_integer
 from subprocess import call
 from tempfile import NamedTemporaryFile
-
-def print_when_state(primes, file, indentation):
-	file.write('\t' * indentation)
-	file.write('printf("%s\\n"' % ' * '.join('%s^%%" PRIu64 "' % prime for prime in primes))
-
-	for prime in primes:
-		file.write(', s%u' % prime)
-
-	file.write(');\n')
+from .generate import generate
+from .parser import parse_code, parse_integer
 
 def run(code, input, print_when, print_what, **kwargs):
 	fractions = list(parse_code(code))

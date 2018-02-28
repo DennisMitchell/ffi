@@ -1,5 +1,5 @@
-from ntheory import factors
 from sys import stderr
+from .ntheory import factors
 
 def generate(name, *args, **kwargs):
 	try:

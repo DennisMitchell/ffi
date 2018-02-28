@@ -1,7 +1,7 @@
 from collections import defaultdict
-from ntheory import factors
 from re import compile, finditer, match, sub
 from sys import stderr
+from .ntheory import factors
 
 _str_power = r'(?:[1-9][0-9]*(?: *\^ *[1-9][0-9]*)?)'
 _str_product = r'(?:(?:%s *\* *)*%s)' % (_str_power, _str_power)

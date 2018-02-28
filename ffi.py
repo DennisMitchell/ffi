@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from compiler import run
+from lib.compiler import run
 
 def ffi(*args):
 	argparser = ArgumentParser(description = 'Frabjous FRACTRAN Interpreter', prog = 'ffi')
