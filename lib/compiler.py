@@ -1,6 +1,7 @@
 from ctypes import cdll
 from os import remove
 from subprocess import call
+from sys import stderr
 from tempfile import NamedTemporaryFile
 from .generate import generate
 from .parser import parse_code, parse_integer
@@ -69,5 +70,10 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	program = cdll.LoadLibrary(so_file.name)
 	remove(c_file.name)
-	remove(so_file.name)
+
+	try:
+		remove(so_file.name)
+	except:
+		stderr.write('Warning: Could not remove temporary file %r.\n' % so_file.name)
+
 	program.run()
