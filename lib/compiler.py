@@ -11,7 +11,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	primes= sorted(set.union(*map(set, fractions)) | set(input))
 	numargs = len(primes)
 
-	c_file = NamedTemporaryFile(mode = 'w+', suffix = '.c')
+	c_file = NamedTemporaryFile(mode = 'w+', suffix = '.c', delete = False)
 	c_file.write('#include <%s.h>\n' * 4 % ('inttypes', 'signal', 'stdlib', 'stdio') + '\n')
 	c_file.write('void quit(int signal)\n{\n')
 	c_file.write('\tif (signal == 2) fputs("\\n", stderr);\n\texit(128 | signal);')
@@ -57,7 +57,7 @@ def run(code, input, print_when, print_what, **kwargs):
 		generate(print_what, primes, c_file, 1, **kwargs)
 
 	c_file.write('}\n')
-	c_file.flush()
+	c_file.close()
 	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so', delete = False)
 	so_file.close()
 
@@ -67,7 +67,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	]):
 		exit(1)
 
-	c_file.close()
 	program = cdll.LoadLibrary(so_file.name)
+	remove(c_file.name)
 	remove(so_file.name)
 	program.run()
