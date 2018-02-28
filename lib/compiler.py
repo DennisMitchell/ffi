@@ -9,7 +9,7 @@ from .parser import parse_code, parse_integer
 def run(code, input, print_when, print_what, **kwargs):
 	fractions = list(parse_code(code))
 	input = parse_integer(input)
-	primes= sorted(set.union(*map(set, fractions)) | set(input))
+	primes = sorted(set.union(*map(set, fractions + [input])))
 	numargs = len(primes)
 	use_gmp = print_what == 'print_numeric'
 
