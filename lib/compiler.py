@@ -22,7 +22,7 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	c_file.write('\n\tuint64_t one, quot;\n\n')
 	c_file.write('\tsignal(SIGINT, quit);\n')
-	c_file.write('\tsignal(SIGPIPE, quit);\n')
+	c_file.write('\n\t#ifndef __MINGW32__\n\t\tsignal(SIGPIPE, quit);\n\t#endif\n\n')
 	c_file.write('\n\twhile (1)\n\t{\n')
 
 	if print_when == 'print_all':
