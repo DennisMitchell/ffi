@@ -1,5 +1,4 @@
 from collections import defaultdict
-from sys import stderr
 
 last_prime = 821641 # 65536th prime number
 prime_cache = [2]
@@ -17,8 +16,7 @@ def factors(integer):
 			integer //= prime
 
 	if integer > 1:
-		stderr.write('Error: %s is not %u-smooth.\n' % (integer, last_prime))
-		exit(1)
+		raise SystemExit('Error: %s is not %u-smooth.\n' % (integer, last_prime))
 
 	return the_factors
 

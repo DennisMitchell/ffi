@@ -1,7 +1,6 @@
 from os import chdir
 from shutil import rmtree
 from subprocess import call
-from sys import stderr
 from tempfile import mkdtemp
 from .generate import generate
 from .parser import parse_code, parse_integer
@@ -66,10 +65,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	try:
 		assert not call(['cc', '-O2', '-oprogram', 'program.c'] + ['-lgmp'] * use_gmp)
 		call(['./program'])
-	except AssertionError:
-		exit(1)
-	except KeyboardInterrupt:
-		stderr.write('\n')
-		exit(130)
+	except (AssertionError, KeyboardInterrupt):
+		raise SystemExit('')
 	finally:
 		rmtree(tempdir)

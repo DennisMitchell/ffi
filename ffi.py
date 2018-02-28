@@ -15,8 +15,8 @@ def ffi(*args):
 	)
 
 	argparser.add_argument(
-		'input', metavar = 'INPUT',
-		help = 'Pass INPUT to the program.'
+		'input', metavar = 'INPUT', nargs='?', default = '2',
+		help = 'Pass INPUT to the program. (defaults to 2)'
 	)
 
 	print_when = argparser.add_argument_group('when to print')

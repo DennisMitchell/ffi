@@ -1,12 +1,10 @@
-from sys import stderr
 from .ntheory import factors
 
 def generate(name, *args, **kwargs):
 	try:
 		globals()['gen_%s' % name](*args, **kwargs)
 	except KeyError:
-		stderr.write('Error: %r is not a valid output method.\n' % name)
-		exit(1)
+		raise SystemExit('Error: %r is not a valid output method.' % name)
 
 def gen_print_compact(primes, emit, indent, **kwargs):
 	tabs = '\t' * indent
@@ -26,12 +24,10 @@ def gen_print_exp(primes, emit, indent, **kwargs):
 		exps = list(map(int, exps.rstrip(',').split(',')))
 		assert all(exp > 1 for exp in exps)
 	except:
-		stderr.write(
-			'Error: Cannot parse %r as a comma-separated list of integers larger than 1.\n'
+		raise SystemExit(
+			'Error: Cannot parse %r as a comma-separated list of integers larger than 1.'
 			 % kwargs['print_exp']
 		)
-
-		exit(1)
 
 	tabs = '\t' * indent
 	sep = ''
@@ -72,8 +68,9 @@ def gen_print_pow(primes, emit, indent, **kwargs):
 		assert base > 0
 		base = factors(base)
 	except:
-		stderr.write('Error: Cannot parse %r as a positive integer.\n' % kwargs['print_pow'])
-		exit(1)
+		raise SystemExit(
+			'Error: Cannot parse %r as a positive integer.' % kwargs['print_pow']
+		)
 
 	tabs = '\t' * indent
 

@@ -1,6 +1,5 @@
 from collections import defaultdict
 from re import compile, finditer, match, sub
-from sys import stderr
 from .ntheory import factors
 
 _str_power = r'(?:[1-9][0-9]*(?: *\^ *[1-9][0-9]*)?)'
@@ -23,10 +22,12 @@ def match_or_error(regex, string, error_name, print_caret):
 
 	if parsed < len(string):
 		print_from = max(parsed - 20, 0)
-		stderr.write('Error: Unable to parse as a positive %s:\n\n' % error_name)
-		stderr.write(string[print_from:][:80].split('\n')[0] + '\n')
-		if print_caret: stderr.write('~' * (parsed - print_from) + '^\n')
-		exit(1)
+		caret = '\n' + '~' * (parsed - print_from) + '^'
+
+		raise SystemExit(
+			'Error: Unable to parse as a positive %s:\n\n%s%s'
+			 % (error_name, string[print_from:][:80].split('\n')[0], caret * print_caret)
+		)
 
 def parse_code(code):
 	code = sub(_re_comment, '', code).strip('\t\n ')
