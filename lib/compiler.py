@@ -22,9 +22,9 @@ def run(code, input, print_when, print_what, **kwargs):
 		c_file.write('\tuint64_t s%u = %u;\n' % (prime, input[prime]))
 
 	c_file.write('\n\tuint64_t one, quot;\n\n')
-	c_file.write('\tsignal(SIGINT, quit);\n')
-	c_file.write('\n\t#ifndef __MINGW32__\n\t\tsignal(SIGPIPE, quit);\n\t#endif\n\n')
-	c_file.write('\n\twhile (1)\n\t{\n')
+	c_file.write('\t#ifndef __MINGW32__\n\t\tsignal(SIGINT, quit);\n')
+	c_file.write('\t\tsignal(SIGPIPE, quit);\n\t#endif\n\n')
+	c_file.write('\twhile (1)\n\t{\n')
 
 	if print_when == 'print_all':
 		generate(print_what, primes, c_file, 2, **kwargs)
@@ -59,6 +59,7 @@ def run(code, input, print_when, print_what, **kwargs):
 
 	c_file.write('}\n')
 	c_file.close()
+	call(['cp', c_file.name, 'debug.c'])
 	so_file = NamedTemporaryFile(mode = 'rb', suffix = '.so', delete = False)
 	so_file.close()
 
