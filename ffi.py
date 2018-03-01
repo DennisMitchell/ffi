@@ -66,12 +66,30 @@ def ffi(*args):
 			'in the state.'
 	)
 
+	print_format = argparser.add_argument_group('how to print')
+	print_format = print_format.add_mutually_exclusive_group()
+
+	print_format.add_argument(
+		'-i', '--int', dest = 'print_format', default = 'print_int',
+		action = 'store_const', const = 'print_int',
+		help = 'Print the selected integers as integer literals, as '
+			'expressions and/or separated by whitespace. (default)'
+	)
+
+	print_format.add_argument(
+		'-r', '--raw', dest = 'print_format',
+		action = 'store_const', const = 'print_raw',
+		help = 'Print the selected integers (modulo 256) as raw bytes, '
+			'without any separation.'
+	)
+
 	args = argparser.parse_args(list(args) or None)
 	if args.print_pow: args.print_when = 'print_pow'
 	if args.print_exp: args.print_what = 'print_exp'
 
 	run(
-		open(args.file).read(), args.input, args.print_when, args.print_what,
+		open(args.file).read(), args.input,
+		args.print_when, args.print_what, args.print_format,
 		print_pow = args.print_pow,
 		print_exp = args.print_exp,
 	)

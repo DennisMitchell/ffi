@@ -5,7 +5,7 @@ from tempfile import mkdtemp
 from .generate import generate
 from .parser import parse_code, parse_integer
 
-def run(code, input, print_when, print_what, **kwargs):
+def run(code, input, print_when, print_what, print_format, **kwargs):
 	fractions = list(parse_code(code))
 	input = parse_integer(input)
 	primes = sorted(set.union(*map(set, fractions + [input])))
@@ -25,13 +25,13 @@ def run(code, input, print_when, print_what, **kwargs):
 	c_code.append('\twhile (1)\n\t{\n')
 
 	if print_when == 'print_all':
-		generate(print_what, primes, c_code.append, 2, **kwargs)
+		generate(print_what, print_format, primes, c_code.append, 2, **kwargs)
 		c_code.append('\t\tfflush(stdout);\n\n')
 
 	if print_when == 'print_pow':
 		generate(print_when, primes, c_code.append, 2, **kwargs)
 		c_code.append('\t\t{\n')
-		generate(print_what, primes, c_code.append, 3, **kwargs)
+		generate(print_what, print_format, primes, c_code.append, 3, **kwargs)
 		c_code.append('\t\t\tfflush(stdout);\n\t\t}\n\n')
 
 	for fraction in fractions:
@@ -53,7 +53,7 @@ def run(code, input, print_when, print_what, **kwargs):
 	c_code.append('\t\tbreak;\n\t}\n\n')
 
 	if print_when == 'print_final':
-		generate(print_what, primes, c_code.append, 1, **kwargs)
+		generate(print_what, print_format, primes, c_code.append, 1, **kwargs)
 
 	c_code.append('\treturn 0;\n}\n')
 	tempdir = mkdtemp()

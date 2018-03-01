@@ -6,19 +6,25 @@ def generate(name, *args, **kwargs):
 	except KeyError:
 		raise SystemExit('Error: %r is not a valid output method.' % name)
 
-def gen_print_compact(primes, emit, indent, **kwargs):
+def gen_print_compact(format, primes, emit, indent, **kwargs):
 	tabs = '\t' * indent
-	emit(tabs + 'one = 1;\n')
 
-	for prime in primes:
-		emit('%sif (s%u == 1) one = ' % (tabs, prime))
-		emit('!printf("%%s%u", one ? "" : " * ");\n' %  prime)
-		emit('%selse if (s%u) one = ' % (tabs, prime))
-		emit('!printf("%%s%u^%%lu", one ? "" : " * ", s%u);\n' % (prime, prime))
+	if format == 'print_int':
+		emit(tabs + 'one = 1;\n')
 
-	emit(tabs + 'printf("%s\\n", one ? "1" : "");\n')
+		for prime in primes:
+			emit('%sif (s%u == 1) one = ' % (tabs, prime))
+			emit('!printf("%%s%u", one ? "" : " * ");\n' %  prime)
+			emit('%selse if (s%u) one = ' % (tabs, prime))
+			emit('!printf("%%s%u^%%lu", one ? "" : " * ", s%u);\n' % (prime, prime))
 
-def gen_print_exp(primes, emit, indent, **kwargs):
+		emit(tabs + 'printf("%s\\n", one ? "1" : "");\n')
+
+	if format == 'print_raw':
+		for prime in primes:
+			emit('%sif (s%u) putchar(s%u);\n' % (tabs, prime, prime))
+
+def gen_print_exp(format, primes, emit, indent, **kwargs):
 	try:
 		exps = kwargs['print_exp']
 		exps = list(map(int, exps.rstrip(',').split(',')))
@@ -46,12 +52,18 @@ def gen_print_exp(primes, emit, indent, **kwargs):
 					% (prime, exponent, prime, exponent)
 				)
 
-		emit('%sprintf("%s%%lu", quot);\n' % (tabs, sep))
+		if format == 'print_int':
+			emit('%sprintf("%s%%lu", quot);\n' % (tabs, sep))
+
+		if format == 'print_raw':
+			emit(tabs + 'putchar(quot);\n')
+
 		sep = ' '
 
-	emit(tabs + 'printf("\\n");\n')
+	if format == 'print_int':
+		emit(tabs + 'printf("\\n");\n')
 
-def gen_print_numeric(primes, emit, indent, **kwargs):
+def gen_print_numeric(format, primes, emit, indent, **kwargs):
 	tabs = '\t' * indent
 	emit(tabs + 'mpz_set_ui(out, 1);\n')
 
@@ -59,7 +71,11 @@ def gen_print_numeric(primes, emit, indent, **kwargs):
 		emit(tabs + 'mpz_ui_pow_ui(pow, %uUL, s%u);\n' % (prime, prime))
 		emit(tabs + 'mpz_mul(out, out, pow);\n')
 
-	emit(tabs + 'gmp_printf("%Zu\\n", out);\n')
+	if format == 'print_int':
+		emit(tabs + 'gmp_printf("%Zu\\n", out);\n')
+
+	if format == 'print_raw':
+		emit(tabs + 'putchar(mpz_get_ui(out));\n')
 
 def gen_print_pow(primes, emit, indent, **kwargs):
 	try:
@@ -89,11 +105,19 @@ def gen_print_pow(primes, emit, indent, **kwargs):
 	emit(and_.join('%u * quot == s%u' % (base[prime], prime) for prime in primes))
 	emit('\n%s)\n' % tabs)
 
-def gen_print_whole(primes, emit, indent, **kwargs):
+def gen_print_whole(format, primes, emit, indent, **kwargs):
 	emit('\t' * indent)
-	emit('printf("%s\\n"' % ' * '.join('%u^%%lu"' % prime for prime in primes))
 
-	for prime in primes:
-		emit(', s%u' % prime)
+	if format == 'print_int':
+		emit('printf("%s\\n"' % ' * '.join('%u^%%lu' % prime for prime in primes))
+
+		for prime in primes:
+			emit(', s%u' % prime)
+
+	if format == 'print_raw':
+		emit('printf("%s"' % ('%c' * len(primes)))
+
+		for prime in primes:
+			emit(', (char) s%u' % prime)
 
 	emit(');\n')
