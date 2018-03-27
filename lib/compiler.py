@@ -19,7 +19,7 @@ def run(code, input, print_when, print_what, **kwargs):
 		c_code.append('\tuint64_t s%u = %u;\n' % (prime, input[prime]))
 
 	c_code.append('\n\tuint64_t one, quot;\n\n')
-	c_code.append('\twhile (1)\n\t{\n')
+	c_code.append('\twhile (!ferror(stdout))\n\t{\n')
 
 	if print_when == 'print_all':
 		generate(print_what, primes, c_code.append, 2, **kwargs)
