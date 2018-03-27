@@ -22,7 +22,7 @@ def run(code, input, print_when, print_what, print_format, **kwargs):
 
 	c_code.append('\tunsigned long one, quot;\n\n')
 	c_code.append('\tmpz_t pow, out;\n\tmpz_init(pow);\n\tmpz_init(out);\n\n' * use_gmp)
-	c_code.append('\twhile (1)\n\t{\n')
+	c_code.append('\twhile (!ferror(stdout))\n\t{\n')
 
 	if print_when == 'print_all':
 		generate(print_what, print_format, primes, c_code.append, 2, **kwargs)
